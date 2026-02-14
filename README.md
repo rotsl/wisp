@@ -323,9 +323,9 @@ See `LICENSE` file.
 <!-- 🌬️ Wisp Signature -->
 <div align="center">
 
-  🌬️✨🚀💎⚡🔥🌙💫🌊🧠🎯💻📐🎨🛠️🌍  
+   
 
-  <h1>🌬️ Wisp 🌬️</h1>
+  <h1>🌬️ Wisp </h1>
 
   <p>✨ Design that thinks for you ✨</p>
   <p>🚫 Zero Classes • ⚙️ Zero Config • 💎 Pure HTML 🚫</p>
@@ -340,6 +340,6 @@ See `LICENSE` file.
 
   <br/><br/>
 
-  🌟🔥💫🌈⚡🚀✨🌬️💎🎯🛠️📦🌍🎨🌙🧠  
+   
 
 </div>
