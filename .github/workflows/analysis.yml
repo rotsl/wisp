@@ -8,12 +8,6 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
-# Add permissions for Pages deployment
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 jobs:
   analyze:
     runs-on: ubuntu-latest
@@ -89,7 +83,9 @@ jobs:
     - name: Generate interactive dashboard
       run: |
         python scripts/generate_dashboard.py
-        mv public/dashboard.html reports/dashboard.html
+        cp public/dashboard.html reports/dashboard.html
+        # Also copy dist files for the site
+        cp -r dist reports/
     
     - name: Upload analysis artifacts
       uses: actions/upload-artifact@v4
@@ -97,21 +93,16 @@ jobs:
         name: analysis-report
         path: reports/
     
-    # Use newer GitHub Pages deployment
-    - name: Setup Pages
-      if: github.ref == 'refs/heads/main'
-      uses: actions/configure-pages@v4
-    
-    - name: Upload to GitHub Pages
-      if: github.ref == 'refs/heads/main'
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./reports
-    
+    # Deploy to gh-pages branch using classic method
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      id: deployment
-      uses: actions/deploy-pages@v4
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./reports
+        publish_branch: gh-pages
+        force_orphan: true
+        commit_message: "docs: update analysis report [skip ci]"
 
   benchmark:
     runs-on: ubuntu-latest
