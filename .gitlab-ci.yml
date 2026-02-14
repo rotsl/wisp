@@ -1,0 +1,37 @@
+stages:
+  - test
+  - build
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
+test:
+  stage: test
+  script:
+    - python tests/test_scanner.py
+  only:
+    - main
+    - merge_requests
+
+build:
+  stage: build
+  script:
+    - python scripts/build.py
+  artifacts:
+    paths:
+      - dist/
+  only:
+    - main
+    - tags
