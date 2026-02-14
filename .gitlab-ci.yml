@@ -87,9 +87,8 @@ analyze:
       echo "" >> public/analysis/index.md
       python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o public/analysis/wiki.css 2>&1 | tee -a public/analysis/index.md || true
     
-    # Generate dashboard
+    # Generate dashboard (already outputs to public/dashboard.html)
     - python scripts/generate_dashboard.py
-    - cp public/dashboard.html public/dashboard.html
     
     # Create index.html matching GitHub style
     - |
