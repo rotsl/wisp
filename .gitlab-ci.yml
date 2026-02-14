@@ -1,0 +1,155 @@
+stages:
+  - test
+  - build
+  - analyze
+  - report
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - venv/
+
+before_script:
+  - python -V
+  - pip install virtualenv
+  - virtualenv venv
+  - source venv/bin/activate
+  - pip install -r requirements.txt
+
+test:
+  stage: test
+  script:
+    - python tests/test_scanner.py
+  artifacts:
+    reports:
+      junit: test-results.xml
+    paths:
+      - test-results.xml
+    expire_in: 1 week
+
+build:
+  stage: build
+  script:
+    - python scripts/build.py
+    - ls -lh dist/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 month
+
+analyze:
+  stage: analyze
+  script:
+    - mkdir -p public/analysis
+    - |
+      echo "# Wisp Analysis Report" > public/analysis/index.md
+      echo "Pipeline: $CI_PIPELINE_ID | Branch: $CI_COMMIT_REF_NAME" >> public/analysis/index.md
+      echo "Commit: $CI_COMMIT_SHORT_SHA" >> public/analysis/index.md
+      echo "Date: $(date)" >> public/analysis/index.md
+      echo "" >> public/analysis/index.md
+    - |
+      echo "## Test Fixtures" >> public/analysis/index.md
+      for fixture in tests/fixtures/*.html; do
+        echo "### $(basename $fixture)" >> public/analysis/index.md
+        python3 << EOF >> public/analysis/index.md
+      import sys
+      sys.path.insert(0, '.')
+      from src.core.scanner import WispScanner
+      
+      with open('$fixture') as f:
+          scanner = WispScanner(f.read())
+          a = scanner.analyze()
+      
+      print(f"- **Context:** \`{a.context}\`")
+      print(f"- **Pattern:** \`{a.pattern}\`")
+      print(f"- **Density:** \`{a.density:.4f}\`")
+      print(f"- **Depth:** \`{a.depth}\`")
+      print("")
+      EOF
+      done
+    - |
+      echo "## Live URL Tests" >> public/analysis/index.md
+      python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o public/analysis/wiki.css 2>&1 | tee -a public/analysis/index.md || true
+      python -m src.core.fetcher https://example.com --css-only -o public/analysis/example.css 2>&1 | tee -a public/analysis/index.md || true
+    - |
+      echo "## File Sizes" >> public/analysis/index.md
+      echo "" >> public/analysis/index.md
+      ls -lh dist/ >> public/analysis/index.md
+  artifacts:
+    paths:
+      - public/analysis/
+    expire_in: 1 month
+  only:
+    - main
+    - merge_requests
+
+pages:
+  stage: report
+  script:
+    - mkdir -p public
+    - cp -r dist public/
+    - |
+      cat > public/index.html << 'EOF'
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Wisp Analysis Dashboard</title>
+        <style>
+          body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
+          h1 { color: #333; }
+          .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin: 20px 0; }
+          .metric { display: inline-block; margin: 10px 20px 10px 0; }
+          .metric-value { font-size: 24px; font-weight: bold; color: #0066cc; }
+          .metric-label { font-size: 12px; color: #666; text-transform: uppercase; }
+          pre { background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto; }
+          a { color: #0066cc; }
+        </style>
+      </head>
+      <body>
+        <h1>🌬️ Wisp Analysis Dashboard</h1>
+        <div class="card">
+          <h2>Pipeline #$CI_PIPELINE_ID</h2>
+          <p>Branch: <code>$CI_COMMIT_REF_NAME</code> | Commit: <code>$CI_COMMIT_SHORT_SHA</code></p>
+          <p>Generated: $(date)</p>
+        </div>
+        
+        <div class="card">
+          <h2>Quick Links</h2>
+          <ul>
+            <li><a href="analysis/index.md">Detailed Analysis Report</a></li>
+            <li><a href="dist/wisp.min.css">Download wisp.min.css</a></li>
+            <li><a href="dist/wisp.min.js">Download wisp.min.js</a></li>
+          </ul>
+        </div>
+        
+        <div class="card">
+          <h2>Build Artifacts</h2>
+          <pre id="files">Loading...</pre>
+        </div>
+        
+        <script>
+          fetch('dist/')
+            .then(r => r.text())
+            .then(html => {
+              const files = html.match(/href="[^"]+\.(css|js)"/g) || [];
+              document.getElementById('files').textContent = 
+                files.map(f => f.replace(/href="|"/g, '')).join('\n') || 'Files not listed';
+            })
+            .catch(() => {
+              document.getElementById('files').textContent = 'dist/\\nwisp.css\\nwisp.js\\nwisp.min.css\\nwisp.min.js';
+            });
+        </script>
+      </body>
+      </html>
+      EOF
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+  dependencies:
+    - build
+    - analyze
