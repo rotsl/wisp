@@ -53,20 +53,105 @@ jobs:
         # Copy built files
         cp dist/* _site/dist/
         
-        # Generate markdown report
-        echo "# Wisp Analysis Report" > _site/analysis/index.md
-        echo "" >> _site/analysis/index.md
-        echo "**Generated:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> _site/analysis/index.md
-        echo "" >> _site/analysis/index.md
-        echo "**Commit:** ${{ github.sha }}" >> _site/analysis/index.md
-        echo "" >> _site/analysis/index.md
-        echo "## Test Fixtures Analysis" >> _site/analysis/index.md
-        echo "" >> _site/analysis/index.md
+        # Generate HTML report instead of markdown
+        cat > _site/analysis/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Wisp Analysis Report</title>
+          <style>
+            :root {
+              --primary: #0066cc;
+              --bg: #ffffff;
+              --text: #1a1a1a;
+              --muted: #666666;
+              --border: #e1e4e8;
+              --card-bg: #f6f8fa;
+              --code-bg: #f4f4f4;
+            }
+            @media (prefers-color-scheme: dark) {
+              :root {
+                --bg: #0d1117;
+                --text: #c9d1d9;
+                --muted: #8b949e;
+                --border: #30363d;
+                --card-bg: #161b22;
+                --code-bg: #21262d;
+              }
+            }
+            * { box-sizing: border-box; margin: 0; }
+            body {
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              background: var(--bg);
+              color: var(--text);
+              line-height: 1.6;
+              max-width: 900px;
+              margin: 0 auto;
+              padding: 40px 20px;
+            }
+            h1 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
+            h2 { margin-top: 30px; color: var(--primary); }
+            h3 { margin-top: 20px; }
+            .meta { color: var(--muted); font-size: 0.9em; margin-bottom: 30px; }
+            .fixture {
+              background: var(--card-bg);
+              border: 1px solid var(--border);
+              border-radius: 8px;
+              padding: 20px;
+              margin: 15px 0;
+            }
+            .fixture h3 { margin-top: 0; }
+            .metric {
+              display: inline-block;
+              margin-right: 20px;
+              font-family: monospace;
+              background: var(--code-bg);
+              padding: 4px 8px;
+              border-radius: 4px;
+              font-size: 0.9em;
+            }
+            .back {
+              display: inline-block;
+              margin-bottom: 20px;
+              color: var(--primary);
+              text-decoration: none;
+            }
+            .back:hover { text-decoration: underline; }
+            pre {
+              background: var(--code-bg);
+              padding: 15px;
+              border-radius: 6px;
+              overflow-x: auto;
+              font-size: 0.9em;
+            }
+            code {
+              font-family: 'Monaco', 'Consolas', monospace;
+              font-size: 0.9em;
+            }
+          </style>
+        </head>
+        <body>
+          <a href="/wisp/" class="back">← Back to Home</a>
+          <h1>🧪 Wisp Analysis Report</h1>
+          <div class="meta">
+            Generated: 
+        EOF
+        echo "$(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> _site/analysis/index.html
+        cat >> _site/analysis/index.html << 'EOF'
+          </div>
+          
+          <h2>Test Fixtures Analysis</h2>
+          <div id="fixtures">
+        EOF
         
-        # Analyze each fixture
+        # Analyze each fixture and append to HTML
         for fixture in tests/fixtures/*.html; do
-          echo "### $(basename $fixture)" >> _site/analysis/index.md
-          python3 << EOF >> _site/analysis/index.md
+          name=$(basename "$fixture")
+          echo "<div class=\"fixture\"><h3>📄 $name</h3>" >> _site/analysis/index.html
+          
+          python3 << EOF >> _site/analysis/index.html
         import sys
         sys.path.insert(0, '.')
         from src.core.scanner import WispScanner
@@ -75,19 +160,41 @@ jobs:
             scanner = WispScanner(f.read())
             a = scanner.analyze()
         
-        print(f"- **Context:** \`{a.context}\`")
-        print(f"- **Pattern:** \`{a.pattern}\`")
-        print(f"- **Density:** \`{a.density:.4f}\`")
-        print(f"- **Depth:** \`{a.depth}\`")
-        print("")
+        print(f'<div class="metric"><strong>Context:</strong> {a.context}</div>')
+        print(f'<div class="metric"><strong>Pattern:</strong> {a.pattern}</div>')
+        print(f'<div class="metric"><strong>Density:</strong> {a.density:.4f}</div>')
+        print(f'<div class="metric"><strong>Depth:</strong> {a.depth}</div>')
+        print('</div>')
         EOF
         done
         
-        # Live examples
-        echo "" >> _site/analysis/index.md
-        echo "## Live URL Tests" >> _site/analysis/index.md
-        echo "" >> _site/analysis/index.md
-        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o _site/analysis/wiki.css 2>&1 | tee -a _site/analysis/index.md || true
+        # Add live URL section
+        cat >> _site/analysis/index.html << 'EOF'
+          </div>
+          
+          <h2>🌐 Live URL Tests</h2>
+          <div class="fixture">
+            <h3>Wikipedia - Wiki</h3>
+            <p>Testing on real-world content from en.wikipedia.org</p>
+        EOF
+        
+        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o _site/analysis/wiki.css 2>&1 | tee -a _site/analysis/index.html || true
+        
+        cat >> _site/analysis/index.html << 'EOF'
+          </div>
+          
+          <h2>📊 Generated CSS</h2>
+          <p>Download the generated CSS files:</p>
+          <ul>
+            <li><a href="wiki.css">wiki.css</a> - Wikipedia optimized styles</li>
+          </ul>
+          
+          <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9em;">
+            Generated by GitHub Actions
+          </footer>
+        </body>
+        </html>
+        EOF
     
     - name: Generate dashboard
       run: |
@@ -218,8 +325,8 @@ jobs:
             
             <div class="card">
               <h3>📝 Analysis Report</h3>
-              <p>Detailed markdown report with fixture analysis and live URL tests.</p>
-              <a href="analysis/index.md" class="button">View Report</a>
+              <p>Detailed HTML report with fixture analysis and live URL tests.</p>
+              <a href="analysis/" class="button">View Report</a>
             </div>
             
             <div class="card">
