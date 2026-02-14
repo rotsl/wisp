@@ -1,0 +1,182 @@
+name: Wisp Analysis & Reporting
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly analysis
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Build Wisp
+      run: python scripts/build.py
+    
+    - name: Run tests
+      run: python tests/test_scanner.py
+    
+    - name: Analyze test fixtures
+      run: |
+        mkdir -p reports
+        echo "# Wisp Analysis Report" > reports/analysis.md
+        echo "Generated: $(date)" >> reports/analysis.md
+        echo "" >> reports/analysis.md
+        
+        # Analyze each fixture
+        for fixture in tests/fixtures/*.html; do
+          echo "## $(basename $fixture)" >> reports/analysis.md
+          python3 << EOF >> reports/analysis.md
+        import sys
+        sys.path.insert(0, '.')
+        from src.core.scanner import WispScanner
+        
+        with open('$fixture') as f:
+            scanner = WispScanner(f.read())
+            a = scanner.analyze()
+        
+        print(f"- **Context:** {a.context}")
+        print(f"- **Pattern:** {a.pattern}")
+        print(f"- **Density:** {a.density:.4f}")
+        print(f"- **Depth:** {a.depth}")
+        print("")
+        EOF
+        done
+    
+    - name: Fetch live examples
+      run: |
+        echo "## Live URL Analysis" >> reports/analysis.md
+        
+        # Wikipedia
+        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o reports/wiki.css 2>&1 | tee -a reports/analysis.md
+        
+        # Example.com
+        python -m src.core.fetcher https://example.com --css-only -o reports/example.css 2>&1 | tee -a reports/analysis.md
+    
+    - name: Generate size report
+      run: |
+        echo "## File Size Report" >> reports/analysis.md
+        echo "" >> reports/analysis.md
+        echo "| File | Size |" >> reports/analysis.md
+        echo "|------|------|" >> reports/analysis.md
+        for f in dist/*; do
+          size=$(du -h "$f" | cut -f1)
+          echo "| $(basename $f) | $size |" >> reports/analysis.md
+        done
+    
+    - name: Upload analysis artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: analysis-report
+        path: reports/
+    
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./reports
+        destination_dir: analysis
+
+  benchmark:
+    runs-on: ubuntu-latest
+    needs: analyze
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest-benchmark
+    
+    - name: Run benchmarks
+      run: |
+        python3 << 'EOF' > benchmark.json
+        import time
+        import json
+        import sys
+        sys.path.insert(0, '.')
+        from src.core.scanner import WispScanner
+        
+        # Load Wikipedia-sized content
+        with open('tests/fixtures/blog-post.html') as f:
+            content = f.read()
+        
+        results = {}
+        
+        # Benchmark 1: Analysis speed
+        start = time.perf_counter()
+        for _ in range(100):
+            scanner = WispScanner(content)
+            scanner.analyze()
+        results['analysis_100x'] = (time.perf_counter() - start) * 1000
+        
+        # Benchmark 2: CSS generation
+        scanner = WispScanner(content)
+        scanner.analyze()
+        start = time.perf_counter()
+        for _ in range(100):
+            scanner.generate_css()
+        results['css_gen_100x'] = (time.perf_counter() - start) * 1000
+        
+        # Benchmark 3: Large content
+        large_content = content * 10  # 10x size
+        start = time.perf_counter()
+        scanner = WispScanner(large_content)
+        scanner.analyze()
+        results['large_content_10x'] = (time.perf_counter() - start) * 1000
+        
+        print(json.dumps(results, indent=2))
+        EOF
+    
+    - name: Comment PR with benchmark
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const benchmark = JSON.parse(fs.readFileSync('benchmark.json', 'utf8'));
+          
+          const body = `## ⚡ Performance Benchmark
+          
+          | Test | Time (ms) |
+          |------|-----------|
+          | Analysis (100x) | ${benchmark.analysis_100x.toFixed(2)} |
+          | CSS Generation (100x) | ${benchmark.css_gen_100x.toFixed(2)} |
+          | Large Content (10x) | ${benchmark.large_content_10x.toFixed(2)} |
+          
+          <sub>Generated by GitHub Actions</sub>`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
