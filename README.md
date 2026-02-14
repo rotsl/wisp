@@ -6,7 +6,8 @@
 [![GitLab Pages](https://img.shields.io/badge/GitLab%20Pages-Live-orange)](https://rotsl.gitlab.io/wisp/)
 [![License](https://img.shields.io/github/license/rotsl/wisp)](LICENSE)
 
-
+[![npm version](https://img.shields.io/npm/v/@rotsl/wisp.svg)](https://www.npmjs.com/package/@rotsl/wisp)
+[![npm downloads](https://img.shields.io/npm/dm/@rotsl/wisp.svg)](https://www.npmjs.com/package/@rotsl/wisp)
 > Context-aware, zero-dependency UI engine. Your HTML structure dictates the design.
 
 **~5KB total** • **Zero config** • **Zero dependencies** • **Semantic-first**
