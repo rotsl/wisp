@@ -39,15 +39,15 @@ jobs:
     
     - name: Analyze test fixtures
       run: |
-        mkdir -p reports
-        echo "# Wisp Analysis Report" > reports/analysis.md
-        echo "Generated: $(date)" >> reports/analysis.md
-        echo "" >> reports/analysis.md
+        mkdir -p reports/analysis
+        echo "# Wisp Analysis Report" > reports/analysis/index.md
+        echo "Generated: $(date)" >> reports/analysis/index.md
+        echo "" >> reports/analysis/index.md
         
         # Analyze each fixture
         for fixture in tests/fixtures/*.html; do
-          echo "## $(basename $fixture)" >> reports/analysis.md
-          python3 << EOF >> reports/analysis.md
+          echo "## $(basename $fixture)" >> reports/analysis/index.md
+          python3 << EOF >> reports/analysis/index.md
         import sys
         sys.path.insert(0, '.')
         from src.core.scanner import WispScanner
@@ -66,24 +66,29 @@ jobs:
     
     - name: Fetch live examples
       run: |
-        echo "## Live URL Analysis" >> reports/analysis.md
+        echo "## Live URL Analysis" >> reports/analysis/index.md
         
         # Wikipedia
-        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o reports/wiki.css 2>&1 | tee -a reports/analysis.md
+        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o reports/analysis/wiki.css 2>&1 | tee -a reports/analysis/index.md
         
         # Example.com
-        python -m src.core.fetcher https://example.com --css-only -o reports/example.css 2>&1 | tee -a reports/analysis.md
+        python -m src.core.fetcher https://example.com --css-only -o reports/analysis/example.css 2>&1 | tee -a reports/analysis/index.md
     
     - name: Generate size report
       run: |
-        echo "## File Size Report" >> reports/analysis.md
-        echo "" >> reports/analysis.md
-        echo "| File | Size |" >> reports/analysis.md
-        echo "|------|------|" >> reports/analysis.md
+        echo "## File Size Report" >> reports/analysis/index.md
+        echo "" >> reports/analysis/index.md
+        echo "| File | Size |" >> reports/analysis/index.md
+        echo "|------|------|" >> reports/analysis/index.md
         for f in dist/*; do
           size=$(du -h "$f" | cut -f1)
-          echo "| $(basename $f) | $size |" >> reports/analysis.md
+          echo "| $(basename $f) | $size |" >> reports/analysis/index.md
         done
+    
+    - name: Generate interactive dashboard
+      run: |
+        python scripts/generate_dashboard.py
+        mv public/dashboard.html reports/dashboard.html
     
     - name: Upload analysis artifacts
       uses: actions/upload-artifact@v4
@@ -97,7 +102,7 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./reports
-        destination_dir: analysis
+        destination_dir: .
 
   benchmark:
     runs-on: ubuntu-latest
@@ -114,7 +119,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install pytest-benchmark
     
     - name: Run benchmarks
       run: |
@@ -125,7 +129,6 @@ jobs:
         sys.path.insert(0, '.')
         from src.core.scanner import WispScanner
         
-        # Load Wikipedia-sized content
         with open('tests/fixtures/blog-post.html') as f:
             content = f.read()
         
@@ -147,7 +150,7 @@ jobs:
         results['css_gen_100x'] = (time.perf_counter() - start) * 1000
         
         # Benchmark 3: Large content
-        large_content = content * 10  # 10x size
+        large_content = content * 10
         start = time.perf_counter()
         scanner = WispScanner(large_content)
         scanner.analyze()
