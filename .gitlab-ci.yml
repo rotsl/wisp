@@ -7,13 +7,16 @@ stages:
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
+# Use Python image instead of Ruby
+image: python:3.11-slim
+
 cache:
   paths:
     - .cache/pip
     - venv/
 
 before_script:
-  - python -V
+  - python --version
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
@@ -24,10 +27,8 @@ test:
   script:
     - python tests/test_scanner.py
   artifacts:
-    reports:
-      junit: test-results.xml
     paths:
-      - test-results.xml
+      - test-results.txt
     expire_in: 1 week
 
 build:
@@ -103,11 +104,14 @@ dashboard:
 
 pages:
   stage: report
+  dependencies:
+    - build
+    - analyze
+    - dashboard
   script:
     - mkdir -p public
     - cp -r dist public/
     - |
-      # Create main index with links
       cat > public/index.html << 'EOF'
       <!DOCTYPE html>
       <html>
@@ -157,7 +161,3 @@ pages:
       - public
   only:
     - main
-  dependencies:
-    - build
-    - analyze
-    - dashboard
