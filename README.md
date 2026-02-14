@@ -166,29 +166,28 @@ css = scanner.generate_css()
 
 ```
 wisp/
-├── dist/                   # Built files (4 core files)
-│   ├── wisp.css           # Base styles (2.4KB)
-│   ├── wisp.js            # Runtime scanner (4.3KB)
-│   ├── wisp.min.css       # Minified (1.9KB)
-│   └── wisp.min.js        # Minified (2.4KB)
-├── src/
-│   ├── core/
-│   │   ├── scanner.py     # Python analysis engine
-│   │   ├── wisp.js        # Browser runtime
-│   │   └── fetcher.py     # Auto-fetcher CLI
-│   ├── styles/
-│   │   └── wisp.css       # Source styles
-│   └── cli/
-│       └── bake.py        # Static CSS generator
-├── tests/
-│   ├── fixtures/          # Test HTML files
-│   └── test_scanner.py    # Test suite
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   └── feature_request.md
+│   └── PULL_REQUEST_TEMPLATE.md
+├── .gitignore
+├── .gitlab-ci.yml
+├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
+├── README.md
+├── SECURITY.md
+├── dist/
 ├── docs/
-│   └── examples/          # Live examples
+│   └── examples/
+├── requirements.txt
 ├── scripts/
-│   └── build.py           # Build automation
-├── wisp-fetch             # CLI entry point
-└── README.md
+├── src/
+├── tests/
+├── venv/
+└── wisp-fetch
 ```
 
 ---
@@ -288,7 +287,7 @@ MIT © [rotsl](https://github.com/rotsl)
 - [ ] CSS-only fallback mode
 - [ ] Theme customization API
 - [ ] Browser extension for one-click optimization
-```
+
 
 ---
 
