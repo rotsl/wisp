@@ -1,12 +1,10 @@
 # 🌬️ Wisp
 
 [![GitHub CI](https://github.com/rotsl/wisp/actions/workflows/analysis.yml/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/analysis.yml)
-[![GitHub Pages](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment)
-[![GitHub Release](https://img.shields.io/github/v/release/rotsl/wisp)](https://github.com/rotsl/wisp/releases)
-[![GitLab Release](https://img.shields.io/gitlab/v/release/79488041)](https://gitlab.com/rotsl/wisp/-/releases)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Live-brightgreen)](https://rotsl.github.io/wisp/)
 [![GitLab CI](https://gitlab.com/rotsl/wisp/badges/main/pipeline.svg)](https://gitlab.com/rotsl/wisp/-/pipelines)
+[![GitLab Pages](https://img.shields.io/badge/GitLab%20Pages-Live-orange)](https://rotsl.gitlab.io/wisp/)
 [![License](https://img.shields.io/github/license/rotsl/wisp)](LICENSE)
-[![Repo Size](https://img.shields.io/github/repo-size/rotsl/wisp)](https://github.com/rotsl/wisp)
 [![Last Commit](https://img.shields.io/github/last-commit/rotsl/wisp)](https://github.com/rotsl/wisp/commits/main)
 
 > Context-aware, zero-dependency UI engine. Your HTML structure dictates the design.
@@ -15,10 +13,7 @@
 
 Wisp bridges the gap between "dumb beautiful" classless CSS and "smart complex" frameworks. It analyzes your HTML structure and automatically applies context-appropriate styling—no classes, no build step, no learning curve.
 
-Current release: **v0.1.0**
-
-* GitHub: [https://github.com/rotsl/wisp/releases/tag/v0.1.0](https://github.com/rotsl/wisp/releases/tag/v0.1.0)
-* GitLab: [https://gitlab.com/rotsl/wisp/-/tags/v0.1.0](https://gitlab.com/rotsl/wisp/-/tags/v0.1.0)
+📊 **Live Analysis Dashboard:** [GitHub](https://rotsl.github.io/wisp/) | [GitLab](https://rotsl.gitlab.io/wisp/)
 
 ---
 
@@ -26,11 +21,11 @@ Current release: **v0.1.0**
 
 Current solutions force a choice:
 
-| Approach                      | Limitation                                    |
-| ----------------------------- | --------------------------------------------- |
+| Approach | Limitation |
+|----------|------------|
 | **Classless CSS** (Pico, OAT) | Beautiful but static—doesn't adapt to content |
-| **Utility-first** (Tailwind)  | Powerful but verbose, requires build step     |
-| **Micro-frameworks** (Alpine) | Interactive but adds 15KB+ runtime            |
+| **Utility-first** (Tailwind) | Powerful but verbose, requires build step |
+| **Micro-frameworks** (Alpine) | Interactive but adds 15KB+ runtime |
 
 **Wisp occupies the missing middle**: intelligent, adaptive, and lighter than a PNG.
 
@@ -100,8 +95,7 @@ Generates CSS custom properties:
 
 * Auto-expands `<details>` for narrative content
 * Adds skip links for deep nesting
-* Respects `prefers-reduced-motion`
-* Respects `prefers-color-scheme`
+* Respects `prefers-reduced-motion` and `prefers-color-scheme`
 
 ---
 
@@ -109,12 +103,12 @@ Generates CSS custom properties:
 
 Wisp automatically detects four contexts:
 
-| Context       | Trigger            | Characteristics                                |
-| ------------- | ------------------ | ---------------------------------------------- |
-| **Narrative** | >50% paragraphs    | Increased line-height, reading-optimized width |
-| **Dashboard** | Tables or 4+ cards | Compact spacing, full-width, smaller text      |
-| **Form**      | 2+ inputs          | Medium width, comfortable touch targets        |
-| **Minimal**   | Default            | Balanced defaults                              |
+| Context | Trigger | Characteristics |
+|---------|---------|-----------------|
+| **Narrative** | >50% paragraphs | Increased line-height, reading-optimized width |
+| **Dashboard** | Tables or 4+ cards | Compact spacing, full-width, smaller text |
+| **Form** | 2+ inputs | Medium width, comfortable touch targets |
+| **Minimal** | Default | Balanced defaults |
 
 ---
 
@@ -143,8 +137,6 @@ python tests/test_scanner.py
 # Install CLI tool (optional)
 sudo ln -s $(pwd)/wisp-fetch /usr/local/bin/wisp-fetch
 ```
-
-GitLab CI configuration is located in `.gitlab-ci.yml`.
 
 ---
 
@@ -193,37 +185,29 @@ css = scanner.generate_css()
 
 ```
 wisp/
-├── .github/
-│   ├── ISSUE_TEMPLATE/
-│   └── PULL_REQUEST_TEMPLATE.md
-├── .gitlab-ci.yml
-├── CHANGELOG.md
-├── CODE_OF_CONDUCT.md
-├── CONTRIBUTING.md
-├── LICENSE
-├── README.md
-├── SECURITY.md
-├── dist/
+├── .github/           # GitHub Actions & templates
+├── .gitlab-ci.yml     # GitLab CI configuration
+├── dist/              # Built files (CSS/JS)
 ├── docs/
-│   └── examples/
-├── requirements.txt
-├── scripts/
-├── src/
-├── tests/
-└── wisp-fetch
+│   └── examples/      # Demo files
+├── scripts/           # Build automation
+├── src/               # Source code
+├── tests/             # Test suite
+├── wisp-fetch         # CLI entry point
+└── README.md
 ```
 
 ---
 
 ## 📊 Benchmarks
 
-| Metric            | Wisp     | Pico     | Tailwind  | Alpine |
-| ----------------- | -------- | -------- | --------- | ------ |
-| **Size**          | ~5KB     | 15KB     | 0KB*      | 15KB   |
-| **Runtime**       | ~2KB     | 0KB      | 0KB       | 15KB   |
-| **Config**        | None     | CSS vars | Extensive | JS     |
-| **Content-aware** | ✅        | ❌        | ❌         | ❌      |
-| **Build step**    | Optional | No       | Required  | No     |
+| Metric | Wisp | Pico | Tailwind | Alpine |
+|--------|------|------|----------|--------|
+| **Size** | ~5KB | 15KB | 0KB* | 15KB |
+| **Runtime** | ~2KB | 0KB | 0KB | 15KB |
+| **Config** | None | CSS vars | Extensive | JS |
+| **Content-aware** | ✅ | ❌ | ❌ | ❌ |
+| **Build step** | Optional | No | Required | No |
 
 *Tailwind requires build process; purged CSS varies.
 
@@ -247,10 +231,8 @@ wisp-fetch https://en.wikipedia.org/wiki/Wiki \
 * `prose` pattern recognition
 * Reading-optimized typography (1.7 line-height, 65ch width)
 * Clean extraction of main content
-* Live analysis overlay
 
 **Generated CSS Variables:**
-
 ```css
 --wisp-context: narrative
 --wisp-pattern: prose
@@ -266,14 +248,15 @@ wisp-fetch https://en.wikipedia.org/wiki/Wiki \
 Control behavior without classes:
 
 ```html
+<!-- Auto-expand in narrative context -->
 <details data-wisp-expand="auto">
   <summary>More info</summary>
 </details>
 
-<aside data-wisp-fold="mobile">
-  Sidebar content
-</aside>
+<!-- Hide on mobile -->
+<aside data-wisp-fold="mobile">Sidebar content</aside>
 
+<!-- High priority styling -->
 <section data-wisp-priority="critical">
   Important information
 </section>
@@ -283,30 +266,24 @@ Control behavior without classes:
 
 ## 🌐 Browser Support
 
-* Chrome 88+
-* Firefox 78+
-* Safari 14+
-* Edge 88+
-
-Legacy browsers gracefully degrade to semantic HTML.
-
-Screen readers are fully supported, with ARIA enhancements where needed.
+* **Modern browsers**: Chrome 88+, Firefox 78+, Safari 14+, Edge 88+
+* **Legacy**: Graceful degradation to semantic HTML
+* **Accessibility**: Full screen reader support with auto-generated ARIA
 
 ---
 
 ## 🤝 Philosophy
 
-1. **HTML First** — Semantic markup should look good
-2. **Zero Config** — Sensible defaults
-3. **Progressive Enhancement** — Works without JavaScript
+1. **HTML First** — Semantic markup should look good by default
+2. **Zero Config** — Sensible defaults, escape hatches when needed
+3. **Progressive Enhancement** — Works without JavaScript, enhanced with it
 4. **Performance Budget** — Sub-5KB target
 
 ---
 
 ## 📝 License
 
-MIT License
-See `LICENSE` file.
+[MIT](LICENSE) © [rotsl](https://github.com/rotsl)
 
 ---
 
@@ -320,26 +297,18 @@ See `LICENSE` file.
 
 ---
 
-<!-- 🌬️ Wisp Signature -->
 <div align="center">
 
-   
+### 🌬️ Wisp
 
-  <h1>🌬️ Wisp </h1>
+*Design that thinks for you*
 
-  <p>✨ Design that thinks for you ✨</p>
-  <p>🚫 Zero Classes • ⚙️ Zero Config • 💎 Pure HTML 🚫</p>
+**Zero Classes • Zero Config • Pure HTML**
 
-  <p>🚀⚡ Adaptive • Intelligent • Lightweight ⚡🚀</p>
+[GitHub](https://github.com/rotsl/wisp) • [GitLab](https://gitlab.com/rotsl/wisp) • [Live Demo](https://rotsl.github.io/wisp/)
 
-  <p><em>🧠 Context-aware UI. No framework. No noise.</em></p>
-
-  <br/>
-
-  <strong>👨‍💻 Built by Rohan · @rotsl 💙</strong>
-
-  <br/><br/>
-
-   
+Built by **@rotsl** 💙
 
 </div>
+
+---
