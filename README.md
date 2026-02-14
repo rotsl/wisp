@@ -5,7 +5,7 @@
 [![GitLab CI](https://gitlab.com/rotsl/wisp/badges/main/pipeline.svg)](https://gitlab.com/rotsl/wisp/-/pipelines)
 [![GitLab Pages](https://img.shields.io/badge/GitLab%20Pages-Live-orange)](https://rotsl.gitlab.io/wisp/)
 [![License](https://img.shields.io/github/license/rotsl/wisp)](LICENSE)
-[![Last Commit](https://img.shields.io/github/last-commit/rotsl/wisp)](https://github.com/rotsl/wisp/commits/main)
+
 
 > Context-aware, zero-dependency UI engine. Your HTML structure dictates the design.
 
