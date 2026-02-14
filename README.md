@@ -276,7 +276,7 @@ Control behavior without classes:
 
 ## 📝 License
 
-MIT © [rotsl](https://github.com/rotsl)
+[MIT](https://github.com/rotsl/wisp?tab=MIT-1-ov-file)
 
 ---
 
