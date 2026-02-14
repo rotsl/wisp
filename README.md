@@ -3,7 +3,7 @@
 [![GitHub CI](https://github.com/rotsl/wisp/actions/workflows/analysis.yml/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/analysis.yml)
 [![GitHub Pages](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment)
 [![GitHub Release](https://img.shields.io/github/v/release/rotsl/wisp)](https://github.com/rotsl/wisp/releases)
-[![GitLab Release](https://img.shields.io/gitlab/v/release/rotsl/wisp)](https://gitlab.com/rotsl/wisp/-/releases)
+[![GitLab Release](https://img.shields.io/gitlab/v/release/79488041)](https://gitlab.com/rotsl/wisp/-/releases)
 [![GitLab CI](https://gitlab.com/rotsl/wisp/badges/main/pipeline.svg)](https://gitlab.com/rotsl/wisp/-/pipelines)
 [![License](https://img.shields.io/github/license/rotsl/wisp)](LICENSE)
 [![Repo Size](https://img.shields.io/github/repo-size/rotsl/wisp)](https://github.com/rotsl/wisp)
