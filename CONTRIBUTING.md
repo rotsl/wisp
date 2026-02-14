@@ -67,7 +67,7 @@ Include in your report:
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/wisp.git
+git clone https://github.com/rotsl/wisp.git
 cd wisp
 
 # Create virtual environment
@@ -88,7 +88,7 @@ python scripts/build.py
 
 ```powershell
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/wisp.git
+git clone https://github.com/rotsl/wisp.git
 cd wisp
 
 # Create virtual environment
@@ -185,20 +185,21 @@ Aim for:
 - All contexts tested (narrative, dashboard, form, minimal)
 - Edge cases (empty content, malformed HTML, deep nesting)
 
-## Documentation
+### Documentation
 
 - Update README.md for user-facing changes
 - Update CONTRIBUTING.md for process changes
 - Add examples to docs/examples/ for new features
 - Comment complex code sections
 
-## Questions?
+### Questions?
 
 - Open an issue for discussion
 - Check existing issues and PRs first
 - Be patient with responses
 
-## License
+### License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
+
 ---
