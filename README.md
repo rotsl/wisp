@@ -320,10 +320,26 @@ See `LICENSE` file.
 
 ---
 
-<!-- 🌬️ Wisp Signature Demo -->
-<main>
-  <h1>🌬️ Wisp</h1>
-  <p>Design that thinks for you.</p>
-  <p><em>Zero classes. Zero config. Pure HTML.</em></p>
-  <small>Built by Rohan · @rotsl</small>
-</main>
+<!-- 🌬️ Wisp Signature -->
+<div align="center">
+
+  🌬️✨🚀💎⚡🔥🌙💫🌊🧠🎯💻📐🎨🛠️🌍  
+
+  <h1>🌬️ Wisp 🌬️</h1>
+
+  <p>✨ Design that thinks for you ✨</p>
+  <p>🚫 Zero Classes • ⚙️ Zero Config • 💎 Pure HTML 🚫</p>
+
+  <p>🚀⚡ Adaptive • Intelligent • Lightweight ⚡🚀</p>
+
+  <p><em>🧠 Context-aware UI. No framework. No noise.</em></p>
+
+  <br/>
+
+  <strong>👨‍💻 Built by Rohan · @rotsl 💙</strong>
+
+  <br/><br/>
+
+  🌟🔥💫🌈⚡🚀✨🌬️💎🎯🛠️📦🌍🎨🌙🧠  
+
+</div>
