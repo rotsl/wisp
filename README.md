@@ -1,10 +1,24 @@
 # 🌬️ Wisp
 
+[![GitHub CI](https://github.com/rotsl/wisp/actions/workflows/analysis.yml/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/analysis.yml)
+[![GitHub Pages](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/rotsl/wisp/actions/workflows/pages/pages-build-deployment)
+[![GitHub Release](https://img.shields.io/github/v/release/rotsl/wisp)](https://github.com/rotsl/wisp/releases)
+[![GitLab Release](https://img.shields.io/gitlab/v/release/rotsl/wisp)](https://gitlab.com/rotsl/wisp/-/tags)
+[![GitLab CI](https://gitlab.com/rotsl/wisp/badges/main/pipeline.svg)](https://gitlab.com/rotsl/wisp/-/pipelines)
+[![License](https://img.shields.io/github/license/rotsl/wisp)](LICENSE)
+[![Repo Size](https://img.shields.io/github/repo-size/rotsl/wisp)](https://github.com/rotsl/wisp)
+[![Last Commit](https://img.shields.io/github/last-commit/rotsl/wisp)](https://github.com/rotsl/wisp/commits/main)
+
 > Context-aware, zero-dependency UI engine. Your HTML structure dictates the design.
 
-**5KB total** • **Zero config** • **Zero dependencies** • **Semantic-first**
+**~5KB total** • **Zero config** • **Zero dependencies** • **Semantic-first**
 
 Wisp bridges the gap between "dumb beautiful" classless CSS and "smart complex" frameworks. It analyzes your HTML structure and automatically applies context-appropriate styling—no classes, no build step, no learning curve.
+
+Current release: **v0.1.0**
+
+* GitHub: [https://github.com/rotsl/wisp/releases/tag/v0.1.0](https://github.com/rotsl/wisp/releases/tag/v0.1.0)
+* GitLab: [https://gitlab.com/rotsl/wisp/-/tags/v0.1.0](https://gitlab.com/rotsl/wisp/-/tags/v0.1.0)
 
 ---
 
@@ -12,11 +26,11 @@ Wisp bridges the gap between "dumb beautiful" classless CSS and "smart complex" 
 
 Current solutions force a choice:
 
-| Approach | Limitation |
-|----------|------------|
+| Approach                      | Limitation                                    |
+| ----------------------------- | --------------------------------------------- |
 | **Classless CSS** (Pico, OAT) | Beautiful but static—doesn't adapt to content |
-| **Utility-first** (Tailwind) | Powerful but verbose, requires build step |
-| **Micro-frameworks** (Alpine) | Interactive but adds 15KB+ runtime |
+| **Utility-first** (Tailwind)  | Powerful but verbose, requires build step     |
+| **Micro-frameworks** (Alpine) | Interactive but adds 15KB+ runtime            |
 
 **Wisp occupies the missing middle**: intelligent, adaptive, and lighter than a PNG.
 
@@ -25,6 +39,7 @@ Current solutions force a choice:
 ## 🚀 Quick Start
 
 ### Option 1: Runtime (Dynamic)
+
 ```html
 <!DOCTYPE html>
 <html>
@@ -42,6 +57,7 @@ Current solutions force a choice:
 ```
 
 ### Option 2: Auto-Fetch (CLI)
+
 ```bash
 # Install
 git clone https://github.com/rotsl/wisp.git
@@ -59,13 +75,17 @@ pip install -r requirements.txt
 ## 🧠 How It Works
 
 ### 1. Content Analysis
+
 Wisp scans your DOM and calculates:
-- **Density**: Text-to-element ratio
-- **Pattern**: Prose vs. structured vs. technical
-- **Context**: Narrative, dashboard, form, or minimal
+
+* **Density**: Text-to-element ratio
+* **Pattern**: Prose vs. structured vs. technical
+* **Context**: Narrative, dashboard, form, or minimal
 
 ### 2. Dynamic Styling
+
 Generates CSS custom properties:
+
 ```css
 :root {
   --wisp-context: narrative;
@@ -77,9 +97,11 @@ Generates CSS custom properties:
 ```
 
 ### 3. Semantic Enhancements
-- Auto-expands `<details>` for narrative content
-- Adds skip links for deep nesting
-- Respects `prefers-reduced-motion` and `prefers-color-scheme`
+
+* Auto-expands `<details>` for narrative content
+* Adds skip links for deep nesting
+* Respects `prefers-reduced-motion`
+* Respects `prefers-color-scheme`
 
 ---
 
@@ -87,18 +109,19 @@ Generates CSS custom properties:
 
 Wisp automatically detects four contexts:
 
-| Context | Trigger | Characteristics |
-|---------|---------|-----------------|
-| **Narrative** | >50% paragraphs | Increased line-height, reading-optimized width |
-| **Dashboard** | Tables or 4+ cards | Compact spacing, full-width, smaller text |
-| **Form** | 2+ inputs | Medium width, comfortable touch targets |
-| **Minimal** | Default | Balanced defaults |
+| Context       | Trigger            | Characteristics                                |
+| ------------- | ------------------ | ---------------------------------------------- |
+| **Narrative** | >50% paragraphs    | Increased line-height, reading-optimized width |
+| **Dashboard** | Tables or 4+ cards | Compact spacing, full-width, smaller text      |
+| **Form**      | 2+ inputs          | Medium width, comfortable touch targets        |
+| **Minimal**   | Default            | Balanced defaults                              |
 
 ---
 
 ## 🛠️ Installation & Development
 
-### macOS Setup
+### macOS / Linux Setup
+
 ```bash
 # Clone repository
 git clone https://github.com/rotsl/wisp.git
@@ -121,11 +144,14 @@ python tests/test_scanner.py
 sudo ln -s $(pwd)/wisp-fetch /usr/local/bin/wisp-fetch
 ```
 
+GitLab CI configuration is located in `.gitlab-ci.yml`.
+
 ---
 
 ## 🎯 Usage Examples
 
 ### CLI Auto-Fetcher
+
 ```bash
 # Basic usage - fetch and optimize
 wisp-fetch https://en.wikipedia.org/wiki/Wiki
@@ -147,6 +173,7 @@ wisp-fetch https://github.com/readme -s '.markdown-body'
 ```
 
 ### Python API
+
 ```python
 from src.core.scanner import WispScanner
 
@@ -168,10 +195,7 @@ css = scanner.generate_css()
 wisp/
 ├── .github/
 │   ├── ISSUE_TEMPLATE/
-│   │   ├── bug_report.md
-│   │   └── feature_request.md
 │   └── PULL_REQUEST_TEMPLATE.md
-├── .gitignore
 ├── .gitlab-ci.yml
 ├── CHANGELOG.md
 ├── CODE_OF_CONDUCT.md
@@ -186,7 +210,6 @@ wisp/
 ├── scripts/
 ├── src/
 ├── tests/
-├── venv/
 └── wisp-fetch
 ```
 
@@ -194,38 +217,40 @@ wisp/
 
 ## 📊 Benchmarks
 
-| Metric | Wisp | Pico | Tailwind | Alpine |
-|--------|------|------|----------|--------|
-| **Size** | 5KB | 15KB | 0KB* | 15KB |
-| **Runtime** | 2KB | 0KB | 0KB | 15KB |
-| **Config** | None | CSS vars | Extensive | JS |
-| **Content-aware** | ✅ | ❌ | ❌ | ❌ |
-| **Build step** | Optional | No | Required | No |
+| Metric            | Wisp     | Pico     | Tailwind  | Alpine |
+| ----------------- | -------- | -------- | --------- | ------ |
+| **Size**          | ~5KB     | 15KB     | 0KB*      | 15KB   |
+| **Runtime**       | ~2KB     | 0KB      | 0KB       | 15KB   |
+| **Config**        | None     | CSS vars | Extensive | JS     |
+| **Content-aware** | ✅        | ❌        | ❌         | ❌      |
+| **Build step**    | Optional | No       | Required  | No     |
 
-*Tailwind requires build process; purged CSS varies
+*Tailwind requires build process; purged CSS varies.
 
 ---
 
 ## 📚 Examples
 
 ### Wikipedia Demo
+
 Located in `docs/examples/wikipedia-demo.html`
 
-Live demonstration of Wisp processing Wikipedia's "Wiki" article:
-
 ```bash
-# Generate the demo
-wisp-fetch https://en.wikipedia.org/wiki/Wiki -o docs/examples/wikipedia-demo.html --open
+wisp-fetch https://en.wikipedia.org/wiki/Wiki \
+  -o docs/examples/wikipedia-demo.html \
+  --open
 ```
 
 **What it shows:**
-- Automatic detection of `narrative` context
-- `prose` pattern recognition for encyclopedia content
-- Reading-optimized typography (1.7 line-height, 65ch width)
-- Clean extraction of main content (removes nav/ads/footer)
-- Live analysis overlay showing detected metrics
+
+* Automatic detection of `narrative` context
+* `prose` pattern recognition
+* Reading-optimized typography (1.7 line-height, 65ch width)
+* Clean extraction of main content
+* Live analysis overlay
 
 **Generated CSS Variables:**
+
 ```css
 --wisp-context: narrative
 --wisp-pattern: prose
@@ -241,15 +266,14 @@ wisp-fetch https://en.wikipedia.org/wiki/Wiki -o docs/examples/wikipedia-demo.ht
 Control behavior without classes:
 
 ```html
-<!-- Auto-expand details when in narrative context -->
 <details data-wisp-expand="auto">
   <summary>More info</summary>
 </details>
 
-<!-- Hide on mobile -->
-<aside data-wisp-fold="mobile">Sidebar content</aside>
+<aside data-wisp-fold="mobile">
+  Sidebar content
+</aside>
 
-<!-- Mark priority for high contrast -->
 <section data-wisp-priority="critical">
   Important information
 </section>
@@ -259,35 +283,39 @@ Control behavior without classes:
 
 ## 🌐 Browser Support
 
-- **Modern browsers**: Full support (Chrome 88+, Firefox 78+, Safari 14+, Edge 88+)
-- **Legacy**: Graceful degradation to standard semantic HTML
-- **Screen readers**: Fully accessible, auto-generated ARIA where needed
+* Chrome 88+
+* Firefox 78+
+* Safari 14+
+* Edge 88+
+
+Legacy browsers gracefully degrade to semantic HTML.
+
+Screen readers are fully supported, with ARIA enhancements where needed.
 
 ---
 
 ## 🤝 Philosophy
 
-1. **HTML First**: If it's semantic, it should look good
-2. **Zero Config**: Sensible defaults, escape hatches when needed
-3. **Progressive Enhancement**: Works without JavaScript, enhanced with it
-4. **Performance**: Sub-5KB budget, zero blocking resources
+1. **HTML First** — Semantic markup should look good
+2. **Zero Config** — Sensible defaults
+3. **Progressive Enhancement** — Works without JavaScript
+4. **Performance Budget** — Sub-5KB target
 
 ---
 
 ## 📝 License
 
-[MIT](https://github.com/rotsl/wisp?tab=MIT-1-ov-file)
+MIT License
+See `LICENSE` file.
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] Vue/React wrapper components
-- [ ] More contexts (e-commerce, documentation, wizard)
-- [ ] CSS-only fallback mode
-- [ ] Theme customization API
-- [ ] Browser extension for one-click optimization
-
+* [ ] Vue/React wrapper components
+* [ ] More contexts (e-commerce, documentation, wizard)
+* [ ] CSS-only fallback mode
+* [ ] Theme customization API
+* [ ] Browser extension for one-click optimization
 
 ---
-
