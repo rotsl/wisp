@@ -8,92 +8,74 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+# Add permissions at workflow level
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   analyze:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for gh-pages
     
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
     
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Build Wisp
-      run: python scripts/build.py
+    - name: Build and test
+      run: |
+        python scripts/build.py
+        python tests/test_scanner.py
     
-    - name: Run tests
-      run: python tests/test_scanner.py
-    
-    - name: Analyze test fixtures
+    - name: Generate reports
       run: |
         mkdir -p reports/analysis
         echo "# Wisp Analysis Report" > reports/analysis/index.md
         echo "Generated: $(date)" >> reports/analysis/index.md
         echo "" >> reports/analysis/index.md
         
+        # Analyze fixtures
         for fixture in tests/fixtures/*.html; do
           echo "## $(basename $fixture)" >> reports/analysis/index.md
-          python3 << EOF >> reports/analysis/index.md
+          python3 -c "
         import sys
         sys.path.insert(0, '.')
         from src.core.scanner import WispScanner
-        
         with open('$fixture') as f:
-            scanner = WispScanner(f.read())
-            a = scanner.analyze()
+            s = WispScanner(f.read())
+            a = s.analyze()
+        print(f'- **Context:** {a.context}')
+        print(f'- **Pattern:** {a.pattern}')
+        print(f'- **Density:** {a.density:.4f}')
+        " >> reports/analysis/index.md
+        done
         
-        print(f"- **Context:** {a.context}")
-        print(f"- **Pattern:** {a.pattern}")
-        print(f"- **Density:** {a.density:.4f}")
-        print(f"- **Depth:** {a.depth}")
-        print("")
-        EOF
-        done
-    
-    - name: Fetch live examples
-      run: |
-        echo "## Live URL Analysis" >> reports/analysis/index.md
-        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o reports/analysis/wiki.css 2>&1 | tee -a reports/analysis/index.md
-        python -m src.core.fetcher https://example.com --css-only -o reports/analysis/example.css 2>&1 | tee -a reports/analysis/index.md
-    
-    - name: Generate size report
-      run: |
-        echo "## File Size Report" >> reports/analysis/index.md
-        echo "" >> reports/analysis/index.md
-        echo "| File | Size |" >> reports/analysis/index.md
-        echo "|------|------|" >> reports/analysis/index.md
-        for f in dist/*; do
-          size=$(du -h "$f" | cut -f1)
-          echo "| $(basename $f) | $size |" >> reports/analysis/index.md
-        done
-    
-    - name: Generate interactive dashboard
-      run: |
+        # Live examples
+        python -m src.core.fetcher https://en.wikipedia.org/wiki/Wiki --css-only -o reports/analysis/wiki.css 2>&1 | tee -a reports/analysis/index.md || true
+        
+        # Dashboard
         python scripts/generate_dashboard.py
         cp public/dashboard.html reports/dashboard.html
-        # Also copy dist files for the site
         cp -r dist reports/
     
-    - name: Upload analysis artifacts
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: analysis-report
         path: reports/
-    
-    # Deploy to gh-pages branch using classic method
+
+    # Deploy using GITHUB_TOKEN with write permissions
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
@@ -102,11 +84,13 @@ jobs:
         publish_dir: ./reports
         publish_branch: gh-pages
         force_orphan: true
-        commit_message: "docs: update analysis report [skip ci]"
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
 
   benchmark:
     runs-on: ubuntu-latest
     needs: analyze
+    if: github.event_name == 'pull_request'
     
     steps:
     - uses: actions/checkout@v4
@@ -121,61 +105,29 @@ jobs:
     
     - name: Run benchmarks
       run: |
-        python3 << 'EOF' > benchmark.json
-        import time
-        import json
-        import sys
+        python3 -c "
+        import time, json, sys
         sys.path.insert(0, '.')
         from src.core.scanner import WispScanner
-        
         with open('tests/fixtures/blog-post.html') as f:
             content = f.read()
-        
         results = {}
-        
         start = time.perf_counter()
         for _ in range(100):
-            scanner = WispScanner(content)
-            scanner.analyze()
+            WispScanner(content).analyze()
         results['analysis_100x'] = (time.perf_counter() - start) * 1000
-        
-        scanner = WispScanner(content)
-        scanner.analyze()
-        start = time.perf_counter()
-        for _ in range(100):
-            scanner.generate_css()
-        results['css_gen_100x'] = (time.perf_counter() - start) * 1000
-        
-        large_content = content * 10
-        start = time.perf_counter()
-        scanner = WispScanner(large_content)
-        scanner.analyze()
-        results['large_content_10x'] = (time.perf_counter() - start) * 1000
-        
-        print(json.dumps(results, indent=2))
-        EOF
+        print(json.dumps(results))
+        " > benchmark.json
     
-    - name: Comment PR with benchmark
-      if: github.event_name == 'pull_request'
+    - name: Comment PR
       uses: actions/github-script@v7
       with:
         script: |
           const fs = require('fs');
-          const benchmark = JSON.parse(fs.readFileSync('benchmark.json', 'utf8'));
-          
-          const body = `## ⚡ Performance Benchmark
-          
-          | Test | Time (ms) |
-          |------|-----------|
-          | Analysis (100x) | ${benchmark.analysis_100x.toFixed(2)} |
-          | CSS Generation (100x) | ${benchmark.css_gen_100x.toFixed(2)} |
-          | Large Content (10x) | ${benchmark.large_content_10x.toFixed(2)} |
-          
-          <sub>Generated by GitHub Actions</sub>`;
-          
+          const b = JSON.parse(fs.readFileSync('benchmark.json', 'utf8'));
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: body
+            body: `## ⚡ Benchmark\nAnalysis (100x): ${b.analysis_100x.toFixed(2)}ms`
           });
