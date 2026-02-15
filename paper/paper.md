@@ -138,3 +138,4 @@ Thank you to the open-source community for BeautifulSoup4 and Requests libraries
   howpublished={\url{https://joss.readthedocs.io/en/latest/submitting.html}},
   year={2024}
 }
+```
