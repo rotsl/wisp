@@ -60,6 +60,6 @@ Portions of this paper text were refined using generative AI tools. All AI-gener
 Thank you to the open-source community for BeautifulSoup4 and Requests libraries used in the Python implementation. The project documentation is hosted via GitHub Pages with automated deployment workflows.
 
 # References
-paper/paper.bib
+
 
 
