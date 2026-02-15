@@ -12,7 +12,8 @@
 
 **~5KB total** • **Zero config** • **Zero dependencies** • **Semantic-first**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18643175.svg)](https://doi.org/10.5281/zenodo.18643175)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18644102.svg)](https://doi.org/10.5281/zenodo.18644102)
+
 
 Wisp bridges the gap between "dumb beautiful" classless CSS and "smart complex" frameworks. It analyzes your HTML structure and automatically applies context-appropriate styling—no classes, no build step, no learning curve.
 
