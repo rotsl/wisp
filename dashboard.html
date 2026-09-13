@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wisp Analysis Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rotsl/wisp@main/dist/wisp.min.css">
+    <style>
+        body { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .metric-card { 
+            background: linear-gradient(135deg, var(--wisp-accent), #0052a3); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .metric-value { font-size: 2.5em; font-weight: bold; margin: 10px 0; }
+        .metric-label { text-transform: uppercase; font-size: 0.8em; opacity: 0.9; }
+        .fixture-card { 
+            border: 1px solid var(--wisp-border); 
+            padding: 15px; 
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .fixture-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .context-badge { 
+            display: inline-block; 
+            padding: 4px 12px; 
+            border-radius: 20px; 
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .context-narrative { background: #e3f2fd; color: #1976d2; }
+        .context-dashboard { background: #f3e5f5; color: #7b1fa2; }
+        .context-form { background: #e8f5e9; color: #388e3c; }
+        .context-minimal { background: #fff3e0; color: #f57c00; }
+        .chart-container { height: 300px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🌬️ Wisp Analysis Dashboard</h1>
+        <p>Generated: 2026-09-13 02:10:17</p>
+    </header>
+    
+    <section class="dashboard-grid">
+        <div class="metric-card">
+            <div class="metric-label">Total Fixtures</div>
+            <div class="metric-value">5</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Contexts Detected</div>
+            <div class="metric-value">2</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Avg Density</div>
+            <div class="metric-value">0.05</div>
+        </div>
+    </section>
+    
+    <h2>Fixture Analysis</h2>
+    <div class="dashboard-grid">
+        
+        <div class="fixture-card">
+            <h3>wikipedia.html</h3>
+            <span class="context-badge context-dashboard">dashboard</span>
+            <div style="margin-top: 10px;">
+                <div><strong>Pattern:</strong> structured</div>
+                <div><strong>Density:</strong> 0.0256</div>
+                <div><strong>Depth:</strong> 22</div>
+            </div>
+        </div>
+        
+        <div class="fixture-card">
+            <h3>dashboard.html</h3>
+            <span class="context-badge context-dashboard">dashboard</span>
+            <div style="margin-top: 10px;">
+                <div><strong>Pattern:</strong> navigational</div>
+                <div><strong>Density:</strong> 0.0083</div>
+                <div><strong>Depth:</strong> 4</div>
+            </div>
+        </div>
+        
+        <div class="fixture-card">
+            <h3>wikipedia-test.html</h3>
+            <span class="context-badge context-dashboard">dashboard</span>
+            <div style="margin-top: 10px;">
+                <div><strong>Pattern:</strong> prose</div>
+                <div><strong>Density:</strong> 0.0808</div>
+                <div><strong>Depth:</strong> 5</div>
+            </div>
+        </div>
+        
+        <div class="fixture-card">
+            <h3>blog-post.html</h3>
+            <span class="context-badge context-narrative">narrative</span>
+            <div style="margin-top: 10px;">
+                <div><strong>Pattern:</strong> prose</div>
+                <div><strong>Density:</strong> 0.0806</div>
+                <div><strong>Depth:</strong> 3</div>
+            </div>
+        </div>
+        
+        <div class="fixture-card">
+            <h3>wikipedia-prod.html</h3>
+            <span class="context-badge context-dashboard">dashboard</span>
+            <div style="margin-top: 10px;">
+                <div><strong>Pattern:</strong> prose</div>
+                <div><strong>Density:</strong> 0.0647</div>
+                <div><strong>Depth:</strong> 6</div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <h2>Context Distribution</h2>
+    <div id="chart" class="chart-container"></div>
+    
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        const fixtures = [{"name": "wikipedia.html", "context": "dashboard", "pattern": "structured", "density": 0.0256, "depth": 22}, {"name": "dashboard.html", "context": "dashboard", "pattern": "navigational", "density": 0.0083, "depth": 4}, {"name": "wikipedia-test.html", "context": "dashboard", "pattern": "prose", "density": 0.0808, "depth": 5}, {"name": "blog-post.html", "context": "narrative", "pattern": "prose", "density": 0.0806, "depth": 3}, {"name": "wikipedia-prod.html", "context": "dashboard", "pattern": "prose", "density": 0.0647, "depth": 6}];
+        
+        // Context distribution pie chart
+        const contexts = {};
+        fixtures.forEach(f => {
+            contexts[f.context] = (contexts[f.context] || 0) + 1;
+        });
+        
+        const data = [{
+            values: Object.values(contexts),
+            labels: Object.keys(contexts),
+            type: 'pie',
+            hole: 0.4,
+            marker: {
+                colors: ['#1976d2', '#7b1fa2', '#388e3c', '#f57c00']
+            }
+        }];
+        
+        const layout = {
+            showlegend: true,
+            legend: { orientation: 'h' },
+            margin: { t: 10, b: 10, l: 10, r: 10 }
+        };
+        
+        Plotly.newPlot('chart', data, layout, {responsive: true});
+    </script>
+</body>
+</html>

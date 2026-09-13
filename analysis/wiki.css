@@ -1,0 +1,101 @@
+:root {
+  --wisp-density: 0.03;
+  --wisp-context: dashboard;
+  --wisp-pattern: structured;
+  --wisp-depth: 20;
+  --wisp-spacing-unit: 1.5rem;
+  --wisp-line-height: 1.4;
+  --wisp-max-width: 100%;
+  --wisp-base-font: 0.875rem;
+  --wisp-motion: 200ms;
+  --wisp-generated: "2026-09-13T02:10:17.219825";
+}
+
+/* Context: dashboard | Pattern: structured | Density: 0.03 */
+/* Wisp Base Styles */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+
+
+@media (prefers-color-scheme: dark) {
+  
+}
+
+html {
+  font-size: var(--wisp-base-font);
+  line-height: var(--wisp-line-height);
+  color: var(--wisp-fg);
+  background: var(--wisp-bg);
+}
+
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  max-width: var(--wisp-max-width);
+  margin: 0 auto;
+  padding: var(--wisp-md);
+}
+
+[data-wisp-active="dashboard"] body {
+  max-width: 100%;
+  padding: var(--wisp-sm);
+}
+
+[data-wisp-active="narrative"] body {
+  padding: var(--wisp-xl) var(--wisp-md);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  margin: var(--wisp-lg) 0 var(--wisp-sm);
+  font-weight: 600;
+}
+
+h1 { font-size: calc(var(--wisp-base-font) * 2); }
+h2 { font-size: calc(var(--wisp-base-font) * 1.5); }
+h3 { font-size: calc(var(--wisp-base-font) * 1.25); }
+
+p, ul, ol {
+  margin-bottom: calc(var(--wisp-spacing-unit) * (1 + var(--wisp-density)));
+}
+
+button, input, select, textarea {
+  font: inherit;
+  padding: var(--wisp-sm) var(--wisp-md);
+  border: 1px solid var(--wisp-border);
+  border-radius: calc(var(--wisp-spacing-unit) * 0.25);
+  background: var(--wisp-bg);
+  color: var(--wisp-fg);
+  transition: all var(--wisp-motion) ease;
+}
+
+button:hover, input:focus, select:focus, textarea:focus {
+  border-color: var(--wisp-accent);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+[data-wisp-skip] {
+  position: absolute;
+  top: -100%;
+  left: var(--wisp-md);
+  background: var(--wisp-accent);
+  color: white;
+  padding: var(--wisp-sm) var(--wisp-md);
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+  z-index: 10000;
+  transition: top var(--wisp-motion);
+}
+
+[data-wisp-skip]:focus {
+  top: 0;
+}
+
+@media print {
+  
+  [data-wisp-skip], button { display: none !important; }
+}
